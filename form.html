@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registration Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f5f7fa; }
+        .form-card { max-width: 760px; }
+        #preview { overflow-x: auto; }
+    </style>
+</head>
+<body class="py-4">
+
+<header class="container text-center mb-4">
+    <h1 class="text-primary">Registration Form</h1>
+</header>
+
+<form id="myForm" class="container form-card bg-white p-4 p-md-5 rounded-3 shadow-sm" action="/register" method="post" enctype="multipart/form-data">
+
+    <label class="form-label fw-semibold">Name:</label><br>
+    <input class="form-control" type="text" id="name" name="name" required><br><br>
+
+    <label class="form-label fw-semibold">Email:</label><br>
+    <input class="form-control" type="email" id="email" name="email" required><br><br>
+
+    <label class="form-label fw-semibold">Password:</label><br>
+    <input class="form-control" type="password" id="password" name="password" minlength="6" required><br><br>
+
+    <label class="form-label fw-semibold">Age:</label><br>
+    <input class="form-control" type="number" id="age" name="age" min="1" required><br><br>
+
+    <label class="form-label fw-semibold">Date:</label><br>
+    <input class="form-control" type="date" id="date" name="date"><br><br>
+
+    <label class="form-label fw-semibold">Time:</label><br>
+    <input class="form-control" type="time" id="time" name="time"><br><br>
+
+    <label class="form-label fw-semibold">Mobile:</label><br>
+    <input class="form-control" type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" required><br><br>
+
+    <label class="form-label fw-semibold">Website:</label><br>
+    <input class="form-control" type="url" id="website" name="website"><br><br>
+
+    <label class="form-label fw-semibold">Gender:</label><br>
+    <input class="form-check-input" type="radio" name="gender" value="Male" required> Male
+    <input class="form-check-input" type="radio" name="gender" value="Female"> Female
+    <br><br>
+
+    <label class="form-label fw-semibold">Skills:</label><br>
+    <input class="form-check-input" type="checkbox" name="skill" value="HTML"> HTML
+    <input class="form-check-input" type="checkbox" name="skill" value="CSS"> CSS
+    <input class="form-check-input" type="checkbox" name="skill" value="JS"> JavaScript
+    <input class="form-check-input" type="checkbox" name="skill" value="Python"> Python
+    <input class="form-check-input" type="checkbox" name="skill" value="AIML"> AIML
+    <br><br>
+
+    <label class="form-label fw-semibold">Select City:</label><br>
+    <select class="form-select" id="city" name="city" required>
+        <option value="">Select City</option>
+        <option value="Ahmedabad">Ahmedabad</option>
+        <option value="Surat">Surat</option>
+        <option value="Rajkot">Rajkot</option>
+    </select>
+    <br><br>
+
+    <label class="form-label fw-semibold">Upload one image:</label><br>
+    <input class="form-control" type="file" id="images" name="images" accept="image/*" required>
+    <p class="form-text">Choose one image (maximum 5 MB). It will be shown in 5 different sizes.</p>
+
+    <div id="preview" class="mt-3"></div>
+
+    <br>
+    <button class="btn btn-primary px-4" type="submit">Submit</button>
+</form>
+
+<hr class="container form-card my-4">
+
+<footer class="container text-center text-muted">
+    <p>Footer</p>
+</footer>
+
+<script>
+const imageInput = document.getElementById("images");
+const preview = document.getElementById("preview");
+const previewSizes = [80, 120, 160, 200, 240];
+
+imageInput.addEventListener("change", function () {
+    preview.innerHTML = "";
+    const file = imageInput.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        imageInput.value = "";
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        alert(file.name + " is greater than 5 MB.");
+        imageInput.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        const heading = document.createElement("h3");
+        heading.textContent = "Five preview sizes";
+        preview.appendChild(heading);
+
+        const selectedBar = document.createElement("div");
+        selectedBar.style.display = "flex";
+        selectedBar.style.alignItems = "center";
+        selectedBar.style.gap = "10px";
+
+        const fileName = document.createElement("strong");
+        fileName.textContent = file.name;
+
+        const cancelButton = document.createElement("button");
+        cancelButton.type = "button";
+        cancelButton.textContent = "×";
+        cancelButton.title = "Cancel selected image";
+        cancelButton.setAttribute("aria-label", "Cancel selected image");
+        cancelButton.style.width = "30px";
+        cancelButton.style.height = "30px";
+        cancelButton.style.borderRadius = "50%";
+        cancelButton.style.border = "1px solid #999";
+        cancelButton.style.cursor = "pointer";
+        cancelButton.style.fontSize = "20px";
+        cancelButton.addEventListener("click", function () {
+            imageInput.value = "";
+            preview.innerHTML = "";
+        });
+
+        selectedBar.appendChild(fileName);
+        selectedBar.appendChild(cancelButton);
+        preview.insertBefore(selectedBar, heading);
+
+        previewSizes.forEach((size) => {
+            const item = document.createElement("div");
+            item.style.display = "inline-block";
+            item.style.margin = "10px";
+            item.style.textAlign = "center";
+            item.style.verticalAlign = "bottom";
+
+            const image = document.createElement("img");
+            image.src = event.target.result;
+            image.alt = file.name;
+            image.style.width = size + "px";
+            image.style.height = "auto";
+            image.style.maxHeight = size + "px";
+            image.style.objectFit = "contain";
+            image.style.display = "block";
+
+            const label = document.createElement("small");
+            label.textContent = size + " px wide";
+
+            item.appendChild(image);
+            item.appendChild(label);
+            preview.appendChild(item);
+        });
+    };
+    reader.readAsDataURL(file);
+});
+document.getElementById("myForm").addEventListener("submit", function (e) {
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+    let age = document.getElementById("age").value;
+    let city = document.getElementById("city").value;
+    let mobile = document.getElementById("mobile").value.trim();
+    let gender = document.querySelector('input[name="gender"]:checked');
+
+    if (name === "") {
+        alert("Enter Name");
+        e.preventDefault();
+        return;
+    }
+
+    if (email === "") {
+        alert("Enter Email");
+        e.preventDefault();
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        e.preventDefault();
+        return;
+    }
+
+    if (age === "" || age <= 0) {
+        alert("Enter valid Age");
+        e.preventDefault();
+        return;
+    }
+
+    if (mobile.length !== 10) {
+        alert("Enter valid Mobile Number");
+        e.preventDefault();
+        return;
+    }
+
+    if (!gender) {
+        alert("Select Gender");
+        e.preventDefault();
+        return;
+    }
+
+    if (city === "") {
+        alert("Select City");
+        e.preventDefault();
+        return;
+    }
+
+    if (imageInput.files.length === 0) {
+        alert("Please upload at least one image.");
+        e.preventDefault();
+        return;
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
