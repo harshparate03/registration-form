@@ -41,6 +41,15 @@ def initialize_database():
                 )
                 """
             )
+            # Upgrade databases created with the older `images TEXT` schema.
+            cursor.execute(
+                """
+                ALTER TABLE registrations
+                    ADD COLUMN IF NOT EXISTS image_name TEXT,
+                    ADD COLUMN IF NOT EXISTS image_mime VARCHAR(100),
+                    ADD COLUMN IF NOT EXISTS image_data BYTEA
+                """
+            )
 
 
 @app.get("/")
